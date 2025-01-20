@@ -48,6 +48,7 @@ namespace MauiApp1.ViewModels
 
         private async void Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
+
             foreach (var item in TodoItems.Where(x => x.IsTimerRunning))
             {
                 if (item.TimerStartedAt.HasValue)
@@ -76,6 +77,7 @@ namespace MauiApp1.ViewModels
                     await _databaseService.SaveTodoItemAsync(item);
                 }
             }
+            LoadTodoItems();
         }
 
         private async Task ToggleTimerAsync(TodoItem item)
