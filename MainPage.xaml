@@ -24,13 +24,28 @@
                            BorderColor="Transparent"
                            CornerRadius="10"
                            HasShadow="True">
-                        <Grid ColumnDefinitions="Auto,*">
+                        <Grid ColumnDefinitions="Auto,*,Auto">
                             <CheckBox IsChecked="{Binding IsCompleted}"
+                                    CheckedChanged="OnCheckBoxCheckedChanged"
                                     VerticalOptions="Center"/>
+                            
                             <Label Text="{Binding Title}"
                                    Grid.Column="1"
                                    VerticalOptions="Center"
                                    TextColor="#2b2b2b"/>
+                            
+                            <!-- Silme Butonu -->
+                            <Button Grid.Column="2"
+                                    Text="🗑️"
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DeleteTodoCommand}"
+                                    CommandParameter="{Binding .}"
+                                    BackgroundColor="Transparent"
+                                    TextColor="#ff4444"
+                                    FontSize="18"
+                                    Padding="5"
+                                    WidthRequest="40"
+                                    HeightRequest="40"
+                                    CornerRadius="20"/>
                         </Grid>
                     </Frame>
                 </DataTemplate>

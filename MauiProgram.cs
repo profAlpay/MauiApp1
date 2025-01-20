@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using MauiApp1.ViewModels;
+using MauiApp1.Services;
 
 namespace MauiApp1
 {
@@ -16,9 +17,10 @@ namespace MauiApp1
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
 
-            // View ve ViewModel kayıtları
-            builder.Services.AddTransient<MainPage>();
+            // Servis ve ViewModel kayıtları
+            builder.Services.AddSingleton<DatabaseService>();
             builder.Services.AddTransient<MainViewModel>();
+            builder.Services.AddTransient<MainPage>();
 
 #if DEBUG
             builder.Logging.AddDebug();
