@@ -67,6 +67,7 @@ namespace MauiApp1.ViewModels
                             {
                                 await Shell.Current.DisplayAlert("Süre Doldu!", $"{item.Title} için süre doldu!", "Tamam");
                             });
+                            break;
                         }
                     }
                     else
@@ -76,8 +77,10 @@ namespace MauiApp1.ViewModels
                     }
                     await _databaseService.SaveTodoItemAsync(item);
                 }
+                LoadTodoItems();
             }
-            LoadTodoItems();
+          
+           
         }
 
         private async Task ToggleTimerAsync(TodoItem item)
