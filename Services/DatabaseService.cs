@@ -35,7 +35,7 @@ namespace MauiApp1.Services
         }
 
         public async Task<int> DeleteTodoItemAsync(TodoItem item)
-        {
+        { 
             return await _database.DeleteAsync(item);
         }
     }
