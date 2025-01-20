@@ -62,8 +62,8 @@
                             Command="{Binding StartStopCommand}"
                             BackgroundColor="{Binding IsRunning, Converter={StaticResource RunningButtonColorConverter}}"
                             TextColor="White"
-                            WidthRequest="40"
-                            HeightRequest="40"
+                            WidthRequest="50"
+                            HeightRequest="50"
                             CornerRadius="20"
                             FontSize="18"/>
                     
@@ -71,8 +71,8 @@
                             Command="{Binding ResetCommand}"
                             BackgroundColor="#666666"
                             TextColor="White"
-                            WidthRequest="40"
-                            HeightRequest="40"
+                            WidthRequest="50"
+                            HeightRequest="50"
                             CornerRadius="20"
                             FontSize="18"/>
                 </StackLayout>
@@ -84,8 +84,8 @@
                         IsVisible="{Binding IsTimer}"
                         BackgroundColor="Transparent"
                         TextColor="#666666"
-                        WidthRequest="40"
-                        HeightRequest="40"
+                        WidthRequest="50"
+                        HeightRequest="50"
                         CornerRadius="20"
                         FontSize="18"
                         Margin="0,5,0,0"/>
