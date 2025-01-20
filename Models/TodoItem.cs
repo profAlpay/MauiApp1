@@ -17,5 +17,10 @@ namespace MauiApp1.Models
         public DateTime CreatedAt { get; set; }
         
         public DateTime? CompletedAt { get; set; }
+
+        // Yeni eklenecek özellikler
+        public bool IsTimerRunning { get; set; }
+        public TimeSpan ElapsedTime { get; set; }
+        public DateTime? TimerStartedAt { get; set; }
     }
 } 

@@ -2,6 +2,7 @@
 <Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:MauiApp1"
+             xmlns:converters="clr-namespace:MauiApp1.Converters"
              x:Class="MauiApp1.App">
     <Application.Resources>
         <ResourceDictionary>
@@ -9,6 +10,11 @@
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
+
+            <!-- Converters -->
+            <converters:TimerButtonTextConverter x:Key="TimerButtonTextConverter" />
+            <converters:TimerButtonColorConverter x:Key="TimerButtonColorConverter" />
+            <converters:TimeSpanVisibilityConverter x:Key="TimeSpanVisibilityConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

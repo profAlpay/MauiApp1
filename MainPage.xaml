@@ -24,18 +24,37 @@
                            BorderColor="Transparent"
                            CornerRadius="10"
                            HasShadow="True">
-                        <Grid ColumnDefinitions="Auto,*,Auto">
+                        <Grid ColumnDefinitions="Auto,*,Auto,Auto">
                             <CheckBox IsChecked="{Binding IsCompleted}"
                                     CheckedChanged="OnCheckBoxCheckedChanged"
                                     VerticalOptions="Center"/>
                             
-                            <Label Text="{Binding Title}"
-                                   Grid.Column="1"
-                                   VerticalOptions="Center"
-                                   TextColor="#2b2b2b"/>
+                            <VerticalStackLayout Grid.Column="1">
+                                <Label Text="{Binding Title}"
+                                       VerticalOptions="Center"
+                                       TextColor="#2b2b2b"/>
+                                <Label Text="{Binding ElapsedTime, StringFormat='{0:hh\\:mm\\:ss}'}"
+                                       FontSize="12"
+                                       TextColor="#666666"
+                                       IsVisible="{Binding ElapsedTime, Converter={StaticResource TimeSpanVisibilityConverter}}"/>
+                            </VerticalStackLayout>
+                            
+                            <!-- Timer Butonu -->
+                            <Button Grid.Column="2"
+                                    Text="{Binding IsTimerRunning, Converter={StaticResource TimerButtonTextConverter}}"
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.ToggleTimerCommand}"
+                                    CommandParameter="{Binding .}"
+                                    BackgroundColor="{Binding IsTimerRunning, Converter={StaticResource TimerButtonColorConverter}}"
+                                    TextColor="White"
+                                    FontFamily="MaterialIcons"
+                                    FontSize="18"
+                                    Margin="0,0,5,0"
+                                    WidthRequest="40"
+                                    HeightRequest="40"
+                                    CornerRadius="20"/>
                             
                             <!-- Silme Butonu -->
-                            <Button Grid.Column="2"
+                            <Button Grid.Column="3"
                                     Text="🗑️"
                                     Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DeleteTodoCommand}"
                                     CommandParameter="{Binding .}"
