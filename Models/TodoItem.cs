@@ -18,9 +18,14 @@ namespace MauiApp1.Models
         
         public DateTime? CompletedAt { get; set; }
 
-        // Yeni eklenecek özellikler
+        // Timer özellikleri
         public bool IsTimerRunning { get; set; }
         public TimeSpan ElapsedTime { get; set; }
         public DateTime? TimerStartedAt { get; set; }
+        
+        // Yeni özellikler
+        public TimeSpan TargetDuration { get; set; } // Hedef süre
+        public TimeSpan RemainingTime { get; set; }  // Kalan süre
+        public bool IsCountdown { get; set; }        // Geri sayım modu aktif mi?
     }
 } 

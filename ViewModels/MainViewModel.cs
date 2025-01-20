@@ -3,6 +3,9 @@ using MauiApp1.Services;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using Timer = System.Timers.Timer;
+using System.Threading.Tasks;
+using System.Threading;
+using Microsoft.Maui.Controls;
 
 namespace MauiApp1.ViewModels
 {
@@ -22,6 +25,7 @@ namespace MauiApp1.ViewModels
         public ICommand ToggleCompletedCommand { get; }
         public ICommand DeleteTodoCommand { get; }
         public ICommand ToggleTimerCommand { get; }
+        public ICommand SetTimerCommand { get; }
 
         public MainViewModel(DatabaseService databaseService)
         {
@@ -37,6 +41,7 @@ namespace MauiApp1.ViewModels
             ToggleCompletedCommand = new Command<TodoItem>(async (item) => await ToggleCompletedAsync(item));
             DeleteTodoCommand = new Command<TodoItem>(async (item) => await DeleteTodoAsync(item));
             ToggleTimerCommand = new Command<TodoItem>(async (item) => await ToggleTimerAsync(item));
+            SetTimerCommand = new Command<TodoItem>(async (item) => await SetTimerAsync(item));
             
             LoadTodoItems();
         }
@@ -47,7 +52,27 @@ namespace MauiApp1.ViewModels
             {
                 if (item.TimerStartedAt.HasValue)
                 {
-                    item.ElapsedTime = DateTime.Now - item.TimerStartedAt.Value;
+                    if (item.IsCountdown)
+                    {
+                        // Geri sayım modu
+                        var elapsed = DateTime.Now - item.TimerStartedAt.Value;
+                        item.RemainingTime = item.TargetDuration - elapsed;
+                        
+                        if (item.RemainingTime <= TimeSpan.Zero)
+                        {
+                            item.IsTimerRunning = false;
+                            item.RemainingTime = TimeSpan.Zero;
+                            await MainThread.InvokeOnMainThreadAsync(async () =>
+                            {
+                                await Shell.Current.DisplayAlert("Süre Doldu!", $"{item.Title} için süre doldu!", "Tamam");
+                            });
+                        }
+                    }
+                    else
+                    {
+                        // Normal kronometre modu
+                        item.ElapsedTime = DateTime.Now - item.TimerStartedAt.Value;
+                    }
                     await _databaseService.SaveTodoItemAsync(item);
                 }
             }
@@ -103,6 +128,41 @@ namespace MauiApp1.ViewModels
         {
             await _databaseService.DeleteTodoItemAsync(item);
             TodoItems.Remove(item);
+        }
+
+        private async Task SetTimerAsync(TodoItem item)
+        {
+            string[] durations = { "5 dakika", "15 dakika", "25 dakika", "Özel" };
+            string result = await Shell.Current.DisplayActionSheet("Süre Seç", "İptal", null, durations);
+
+            TimeSpan duration;
+            switch (result)
+            {
+                case "5 dakika":
+                    duration = TimeSpan.FromMinutes(5);
+                    break;
+                case "15 dakika":
+                    duration = TimeSpan.FromMinutes(15);
+                    break;
+                case "25 dakika":
+                    duration = TimeSpan.FromMinutes(25);
+                    break;
+                case "Özel":
+                    string customMinutes = await Shell.Current.DisplayPromptAsync("Özel Süre", "Dakika giriniz:", keyboard: Keyboard.Numeric);
+                    if (int.TryParse(customMinutes, out int minutes))
+                    {
+                        duration = TimeSpan.FromMinutes(minutes);
+                    }
+                    else return;
+                    break;
+                default:
+                    return;
+            }
+
+            item.TargetDuration = duration;
+            item.RemainingTime = duration;
+            item.IsCountdown = true;
+            await _databaseService.SaveTodoItemAsync(item);
         }
     }
 } 
