@@ -14,11 +14,18 @@ namespace MauiApp1.ViewModels
         private readonly DatabaseService _databaseService;
         private readonly Timer _timer;
         private ObservableCollection<TodoItem> _todoItems;
+        private string _currentTime;
         
         public ObservableCollection<TodoItem> TodoItems
         {
             get => _todoItems;
             set => SetProperty(ref _todoItems, value);
+        }
+
+        public string CurrentTime
+        {
+            get => _currentTime;
+            set => SetProperty(ref _currentTime, value);
         }
 
         public ICommand AddTodoCommand { get; }
@@ -44,6 +51,13 @@ namespace MauiApp1.ViewModels
             SetTimerCommand = new Command<TodoItem>(async (item) => await SetTimerAsync(item));
             
             LoadTodoItems();
+
+            // Saat güncellemesi için timer
+            Device.StartTimer(TimeSpan.FromSeconds(1), () =>
+            {
+                CurrentTime = DateTime.Now.ToString("HH:mm:ss");
+                return true;
+            });
         }
 
         private async void Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
@@ -51,33 +65,29 @@ namespace MauiApp1.ViewModels
 
             foreach (var item in TodoItems.Where(x => x.IsTimerRunning))
             {
-                if (item.TimerStartedAt.HasValue)
+                if (item.IsCountdown)
                 {
-                    if (item.IsCountdown)
+                    // Geri sayım modu
+                    var elapsed = DateTime.Now - item.TimerStartedAt.Value;
+                    item.RemainingTime = item.TargetDuration - elapsed;
+                    
+                    if (item.RemainingTime <= TimeSpan.Zero)
                     {
-                        // Geri sayım modu
-                        var elapsed = DateTime.Now - item.TimerStartedAt.Value;
-                        item.RemainingTime = item.TargetDuration - elapsed;
-                        
-                        if (item.RemainingTime <= TimeSpan.Zero)
+                        item.IsTimerRunning = false;
+                        item.RemainingTime = TimeSpan.Zero;
+                        await MainThread.InvokeOnMainThreadAsync(async () =>
                         {
-                            item.IsTimerRunning = false;
-                            item.RemainingTime = TimeSpan.Zero;
-                            await MainThread.InvokeOnMainThreadAsync(async () =>
-                            {
-                                await Shell.Current.DisplayAlert("Süre Doldu!", $"{item.Title} için süre doldu!", "Tamam");
-                            });
-                            break;
-                        }
+                            await Shell.Current.DisplayAlert("Süre Doldu!", $"{item.Title} için süre doldu!", "Tamam");
+                        });
+                        break;
                     }
-                    else
-                    {
-                        // Normal kronometre modu
-                        item.ElapsedTime = DateTime.Now - item.TimerStartedAt.Value;
-                    }
-                    await _databaseService.SaveTodoItemAsync(item);
                 }
-                LoadTodoItems();
+                else
+                {
+                    // Normal kronometre modu
+                    item.ElapsedTime = DateTime.Now - item.TimerStartedAt.Value;
+                }
+                await _databaseService.SaveTodoItemAsync(item);
             }
           
            

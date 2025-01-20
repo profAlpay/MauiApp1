@@ -3,19 +3,58 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MauiApp1.MainPage"
              BackgroundColor="#f5f5f5">
-    
-    <Grid RowDefinitions="Auto,*,Auto" Padding="20">
-        <!-- Başlık -->
-        <Label Text="Görevlerim" 
-               Grid.Row="0"
-               FontSize="32"
-               TextColor="#2b2b2b"
-               Margin="0,20,0,20"/>
 
-        <!-- Görev Listesi -->
-        <CollectionView Grid.Row="1" 
+    <Grid RowDefinitions="Auto,Auto,*" Padding="20">
+        <!-- Üst Kısım: Kronometre ve Sayaç Butonları -->
+        <Grid Grid.Row="0" ColumnDefinitions="*,*" Margin="0,20,0,20">
+            <Button Text="Kronometre"
+                    Grid.Column="0"
+                    BackgroundColor="White"
+                    TextColor="#2b2b2b"
+                    BorderColor="#dddddd"
+                    BorderWidth="1"
+                    CornerRadius="10"
+                    Margin="5"/>
+            
+            <Button Text="Sayaç"
+                    Grid.Column="1"
+                    BackgroundColor="White"
+                    TextColor="#2b2b2b"
+                    BorderColor="#dddddd"
+                    BorderWidth="1"
+                    CornerRadius="10"
+                    Margin="5"/>
+        </Grid>
+
+        <!-- Orta Kısım: Standart Saat -->
+        <Frame Grid.Row="1" 
+               BackgroundColor="White"
+               CornerRadius="75"
+               HeightRequest="150"
+               WidthRequest="150"
+               HorizontalOptions="Center"
+               Padding="0"
+               Margin="0,20">
+            <Grid>
+                <Label Text="{Binding CurrentTime, StringFormat='{0:HH:mm:ss}'}"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"
+                       FontSize="24"
+                       TextColor="#2b2b2b"/>
+            </Grid>
+        </Frame>
+
+        <!-- Alt Kısım: Görevler Listesi -->
+        <CollectionView Grid.Row="2" 
                        ItemsSource="{Binding TodoItems}"
-                       SelectionMode="None">
+                       SelectionMode="None"
+                       Margin="0,20,0,0">
+            <CollectionView.Header>
+                <Label Text="Görevler"
+                       FontSize="20"
+                       TextColor="#2b2b2b"
+                       Margin="0,0,0,10"/>
+            </CollectionView.Header>
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <Frame Margin="0,5" 
@@ -36,17 +75,15 @@
                                 
                                 <!-- Kronometre veya Geri Sayım Gösterimi -->
                                 <Grid>
-                                    <!-- Normal kronometre süresi -->
                                     <Label Text="{Binding ElapsedTime, StringFormat='{0:hh\\:mm\\:ss}'}"
                                            FontSize="12"
                                            TextColor="#666666"
                                            IsVisible="{Binding IsCountdown, Converter={StaticResource InverseBoolConverter}}"
                                            VerticalOptions="Center"/>
                                     
-                                    <!-- Geri sayım süresi -->
                                     <StackLayout Orientation="Horizontal" 
-                                                 IsVisible="{Binding IsCountdown}">
-                                        <Label Text="Kalan Süre: "
+                                               IsVisible="{Binding IsCountdown}">
+                                        <Label Text="Kalan: "
                                                FontSize="12"
                                                TextColor="#666666"
                                                VerticalOptions="Center"/>
@@ -59,7 +96,7 @@
                                 </Grid>
                             </VerticalStackLayout>
                             
-                            <!-- Süre Ayarlama Butonu -->
+                            <!-- Kontrol Butonları -->
                             <Button Grid.Column="2"
                                     Text="⏰"
                                     Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SetTimerCommand}"
@@ -67,12 +104,11 @@
                                     BackgroundColor="Transparent"
                                     TextColor="#666666"
                                     FontSize="18"
-                                    Margin="0,0,0,0"
-                                    WidthRequest="60"
-                                    HeightRequest="60"
-                                    CornerRadius="20"/>
+                                    WidthRequest="40"
+                                    HeightRequest="40"
+                                    CornerRadius="20"
+                                    Margin="2"/>
                             
-                            <!-- Timer Butonu -->
                             <Button Grid.Column="3"
                                     Text="{Binding IsTimerRunning, Converter={StaticResource TimerButtonTextConverter}}"
                                     Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.ToggleTimerCommand}"
@@ -80,12 +116,11 @@
                                     BackgroundColor="{Binding IsTimerRunning, Converter={StaticResource TimerButtonColorConverter}}"
                                     TextColor="White"
                                     FontSize="18"
-                                    Margin="0,0,0,0"
-                                    WidthRequest="60"
-                                    HeightRequest="60"
-                                    CornerRadius="10"/>
+                                    WidthRequest="40"
+                                    HeightRequest="40"
+                                    CornerRadius="20"
+                                    Margin="2"/>
                             
-                            <!-- Silme Butonu -->
                             <Button Grid.Column="4"
                                     Text="🗑️"
                                     Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DeleteTodoCommand}"
@@ -93,10 +128,10 @@
                                     BackgroundColor="Transparent"
                                     TextColor="#ff4444"
                                     FontSize="18"
-                                    Padding="5"
                                     WidthRequest="40"
                                     HeightRequest="40"
-                                    CornerRadius="20"/>
+                                    CornerRadius="20"
+                                    Margin="2"/>
                         </Grid>
                     </Frame>
                 </DataTemplate>
@@ -105,12 +140,16 @@
 
         <!-- Yeni Görev Ekleme Butonu -->
         <Button Grid.Row="2"
-                Text="Yeni Görev Ekle"
+                Text="+"
                 Command="{Binding AddTodoCommand}"
                 BackgroundColor="#4a90e2"
                 TextColor="White"
-                CornerRadius="25"
-                HeightRequest="50"
-                Margin="0,10,0,0"/>
+                CornerRadius="30"
+                HeightRequest="60"
+                WidthRequest="60"
+                FontSize="30"
+                VerticalOptions="End"
+                HorizontalOptions="End"
+                Margin="0,0,20,20"/>
     </Grid>
 </ContentPage>
