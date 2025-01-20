@@ -54,7 +54,7 @@
                     <Label Text="{Binding DisplayTime}"
                            HorizontalOptions="Center"
                            VerticalOptions="Center"
-                           FontSize="48"
+                           FontSize="32"
                            FontAttributes="Bold"
                            FontFamily="Monospace"
                            TextColor="#2b2b2b"/>
