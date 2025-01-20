@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using MauiApp1.ViewModels;
 
 namespace MauiApp1
 {
@@ -20,7 +21,7 @@ namespace MauiApp1
             builder.Services.AddTransient<MainViewModel>();
 
 #if DEBUG
-    		builder.Logging.AddDebug();
+            builder.Logging.AddDebug();
 #endif
 
             return builder.Build();

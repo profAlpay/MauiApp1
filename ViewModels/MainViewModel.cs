@@ -1,9 +1,6 @@
-using System;
-using System.Collections.ObjectModel;
-using System.Threading.Tasks;
-using System.Windows.Input;
 using MauiApp1.Models;
-using MauiApp1.ViewModels.Base;
+using System.Collections.ObjectModel;
+using System.Windows.Input;
 
 namespace MauiApp1.ViewModels
 {
