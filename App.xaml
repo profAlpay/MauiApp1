@@ -17,6 +17,8 @@
             <converters:TimeSpanVisibilityConverter x:Key="TimeSpanVisibilityConverter" />
             <converters:TimeColorConverter x:Key="TimeColorConverter" />
             <converters:InverseBoolConverter x:Key="InverseBoolConverter" />
+            <converters:TimerModeBackgroundConverter x:Key="TimerModeBackgroundConverter" />
+            <converters:TimerModeTextConverter x:Key="TimerModeTextConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

@@ -6,24 +6,32 @@
 
     <Grid RowDefinitions="Auto,Auto,*" Padding="20">
         <!-- Üst Kısım: Kronometre ve Sayaç Butonları -->
-        <Grid Grid.Row="0" ColumnDefinitions="*,*" Margin="0,20,0,20">
-            <Button Text="Kronometre"
-                    Grid.Column="0"
-                    BackgroundColor="White"
-                    TextColor="#2b2b2b"
-                    BorderColor="#dddddd"
-                    BorderWidth="1"
-                    CornerRadius="10"
-                    Margin="5"/>
-            
-            <Button Text="Sayaç"
-                    Grid.Column="1"
-                    BackgroundColor="White"
-                    TextColor="#2b2b2b"
-                    BorderColor="#dddddd"
-                    BorderWidth="1"
-                    CornerRadius="10"
-                    Margin="5"/>
+        <Grid Grid.Row="0" ColumnSpacing="10" Margin="0,20,0,20">
+            <Frame BackgroundColor="White"
+                   CornerRadius="10"
+                   HasShadow="True"
+                   Padding="0"
+                   HeightRequest="80">
+                <Grid ColumnDefinitions="*,*">
+                    <Button Text="⏱️"
+                            Grid.Column="0"
+                            Command="{Binding SetTimerModeCommand}"
+                            CommandParameter="Chronometer"
+                            BackgroundColor="{Binding IsChronometer, Converter={StaticResource TimerModeBackgroundConverter}}"
+                            TextColor="{Binding IsChronometer, Converter={StaticResource TimerModeTextConverter}}"
+                            FontSize="32"
+                            CornerRadius="10"/>
+                    
+                    <Button Text="⏰"
+                            Grid.Column="1"
+                            Command="{Binding SetTimerModeCommand}"
+                            CommandParameter="Timer"
+                            BackgroundColor="{Binding IsTimer, Converter={StaticResource TimerModeBackgroundConverter}}"
+                            TextColor="{Binding IsTimer, Converter={StaticResource TimerModeTextConverter}}"
+                            FontSize="32"
+                            CornerRadius="10"/>
+                </Grid>
+            </Frame>
         </Grid>
 
         <!-- Orta Kısım: Standart Saat -->

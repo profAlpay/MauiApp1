@@ -15,6 +15,8 @@ namespace MauiApp1.ViewModels
         private readonly Timer _timer;
         private ObservableCollection<TodoItem> _todoItems;
         private string _currentTime;
+        private bool _isChronometer = true;
+        private bool _isTimer;
         
         public ObservableCollection<TodoItem> TodoItems
         {
@@ -28,11 +30,36 @@ namespace MauiApp1.ViewModels
             set => SetProperty(ref _currentTime, value);
         }
 
+        public bool IsChronometer
+        {
+            get => _isChronometer;
+            set
+            {
+                if (SetProperty(ref _isChronometer, value) && value)
+                {
+                    IsTimer = false;
+                }
+            }
+        }
+
+        public bool IsTimer
+        {
+            get => _isTimer;
+            set
+            {
+                if (SetProperty(ref _isTimer, value) && value)
+                {
+                    IsChronometer = false;
+                }
+            }
+        }
+
         public ICommand AddTodoCommand { get; }
         public ICommand ToggleCompletedCommand { get; }
         public ICommand DeleteTodoCommand { get; }
         public ICommand ToggleTimerCommand { get; }
         public ICommand SetTimerCommand { get; }
+        public ICommand SetTimerModeCommand { get; }
 
         public MainViewModel(DatabaseService databaseService)
         {
@@ -57,6 +84,19 @@ namespace MauiApp1.ViewModels
             {
                 CurrentTime = DateTime.Now.ToString("HH:mm:ss");
                 return true;
+            });
+
+            SetTimerModeCommand = new Command<string>(mode =>
+            {
+                switch (mode)
+                {
+                    case "Chronometer":
+                        IsChronometer = true;
+                        break;
+                    case "Timer":
+                        IsTimer = true;
+                        break;
+                }
             });
         }
 
