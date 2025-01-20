@@ -15,6 +15,8 @@
             <converters:TimerButtonTextConverter x:Key="TimerButtonTextConverter" />
             <converters:TimerButtonColorConverter x:Key="TimerButtonColorConverter" />
             <converters:TimeSpanVisibilityConverter x:Key="TimeSpanVisibilityConverter" />
+            <converters:TimeColorConverter x:Key="TimeColorConverter" />
+            <converters:InverseBoolConverter x:Key="InverseBoolConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

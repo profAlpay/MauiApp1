@@ -33,10 +33,30 @@
                                 <Label Text="{Binding Title}"
                                        VerticalOptions="Center"
                                        TextColor="#2b2b2b"/>
-                                <Label Text="{Binding ElapsedTime, StringFormat='{0:hh\\:mm\\:ss}'}"
-                                       FontSize="12"
-                                       TextColor="#666666"
-                                       IsVisible="{Binding ElapsedTime, Converter={StaticResource TimeSpanVisibilityConverter}}"/>
+                                
+                                <!-- Kronometre veya Geri Sayım Gösterimi -->
+                                <Grid>
+                                    <!-- Normal kronometre süresi -->
+                                    <Label Text="{Binding ElapsedTime, StringFormat='{0:hh\\:mm\\:ss}'}"
+                                           FontSize="12"
+                                           TextColor="#666666"
+                                           IsVisible="{Binding IsCountdown, Converter={StaticResource InverseBoolConverter}}"
+                                           VerticalOptions="Center"/>
+                                    
+                                    <!-- Geri sayım süresi -->
+                                    <StackLayout Orientation="Horizontal" 
+                                                 IsVisible="{Binding IsCountdown}">
+                                        <Label Text="Kalan Süre: "
+                                               FontSize="12"
+                                               TextColor="#666666"
+                                               VerticalOptions="Center"/>
+                                        <Label Text="{Binding RemainingTime, StringFormat='{0:mm\\:ss}'}"
+                                               FontSize="12"
+                                               TextColor="{Binding RemainingTime, Converter={StaticResource TimeColorConverter}}"
+                                               FontAttributes="Bold"
+                                               VerticalOptions="Center"/>
+                                    </StackLayout>
+                                </Grid>
                             </VerticalStackLayout>
                             
                             <!-- Süre Ayarlama Butonu -->
@@ -77,16 +97,6 @@
                                     WidthRequest="40"
                                     HeightRequest="40"
                                     CornerRadius="20"/>
-
-                            <!-- Süre Gösterimi -->
-                            <Label Grid.Column="1"
-                                   Text="{Binding RemainingTime, StringFormat='{0:mm\\:ss}'}"
-                                   IsVisible="{Binding IsCountdown}"
-                                   TextColor="#666666"
-                                   FontSize="14"
-                                   VerticalOptions="Center"
-                                   HorizontalOptions="End"
-                                   Margin="0,0,10,0"/>
                         </Grid>
                     </Frame>
                 </DataTemplate>
