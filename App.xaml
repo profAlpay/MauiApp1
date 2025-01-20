@@ -19,6 +19,8 @@
             <converters:InverseBoolConverter x:Key="InverseBoolConverter" />
             <converters:TimerModeBackgroundConverter x:Key="TimerModeBackgroundConverter" />
             <converters:TimerModeTextConverter x:Key="TimerModeTextConverter" />
+            <converters:RunningButtonTextConverter x:Key="RunningButtonTextConverter" />
+            <converters:RunningButtonColorConverter x:Key="RunningButtonColorConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

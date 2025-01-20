@@ -14,7 +14,10 @@ namespace MauiApp1.ViewModels
         private readonly DatabaseService _databaseService;
         private readonly Timer _timer;
         private ObservableCollection<TodoItem> _todoItems;
-        private string _currentTime;
+        private string _displayTime = "00:00:00";
+        private TimeSpan _chronoTime = TimeSpan.Zero;
+        private TimeSpan _countdownTime = TimeSpan.FromMinutes(25); // Varsayılan 25 dakika
+        private bool _isRunning;
         private bool _isChronometer = true;
         private bool _isTimer;
         
@@ -24,10 +27,16 @@ namespace MauiApp1.ViewModels
             set => SetProperty(ref _todoItems, value);
         }
 
-        public string CurrentTime
+        public string DisplayTime
         {
-            get => _currentTime;
-            set => SetProperty(ref _currentTime, value);
+            get => _displayTime;
+            set => SetProperty(ref _displayTime, value);
+        }
+
+        public bool IsRunning
+        {
+            get => _isRunning;
+            set => SetProperty(ref _isRunning, value);
         }
 
         public bool IsChronometer
@@ -60,6 +69,9 @@ namespace MauiApp1.ViewModels
         public ICommand ToggleTimerCommand { get; }
         public ICommand SetTimerCommand { get; }
         public ICommand SetTimerModeCommand { get; }
+        public ICommand StartStopCommand { get; }
+        public ICommand ResetCommand { get; }
+        public ICommand SetCountdownTimeCommand { get; }
 
         public MainViewModel(DatabaseService databaseService)
         {
@@ -79,12 +91,9 @@ namespace MauiApp1.ViewModels
             
             LoadTodoItems();
 
-            // Saat güncellemesi için timer
-            Device.StartTimer(TimeSpan.FromSeconds(1), () =>
-            {
-                CurrentTime = DateTime.Now.ToString("HH:mm:ss");
-                return true;
-            });
+            StartStopCommand = new Command(StartStop);
+            ResetCommand = new Command(Reset);
+            SetCountdownTimeCommand = new Command(async () => await SetCountdownTimeAsync());
 
             SetTimerModeCommand = new Command<string>(mode =>
             {
@@ -92,11 +101,44 @@ namespace MauiApp1.ViewModels
                 {
                     case "Chronometer":
                         IsChronometer = true;
+                        DisplayTime = _chronoTime.ToString(@"hh\:mm\:ss");
+                        IsRunning = false;
                         break;
                     case "Timer":
                         IsTimer = true;
+                        DisplayTime = _countdownTime.ToString(@"mm\:ss");
+                        IsRunning = false;
                         break;
                 }
+            });
+
+            // Timer'ı her saniye güncelle
+            Device.StartTimer(TimeSpan.FromSeconds(1), () =>
+            {
+                if (IsRunning)
+                {
+                    if (IsChronometer)
+                    {
+                        _chronoTime = _chronoTime.Add(TimeSpan.FromSeconds(1));
+                        DisplayTime = _chronoTime.ToString(@"hh\:mm\:ss");
+                    }
+                    else if (IsTimer)
+                    {
+                        _countdownTime = _countdownTime.Subtract(TimeSpan.FromSeconds(1));
+                        DisplayTime = _countdownTime.ToString(@"mm\:ss");
+
+                        if (_countdownTime <= TimeSpan.Zero)
+                        {
+                            IsRunning = false;
+                            MainThread.BeginInvokeOnMainThread(async () =>
+                            {
+                                await Shell.Current.DisplayAlert("Süre Doldu!", "Geri sayım tamamlandı!", "Tamam");
+                            });
+                            Reset();
+                        }
+                    }
+                }
+                return true;
             });
         }
 
@@ -218,6 +260,42 @@ namespace MauiApp1.ViewModels
             item.RemainingTime = duration;
             item.IsCountdown = true;
             await _databaseService.SaveTodoItemAsync(item);
+        }
+
+        private void StartStop()
+        {
+            IsRunning = !IsRunning;
+        }
+
+        private void Reset()
+        {
+            IsRunning = false;
+            if (IsChronometer)
+            {
+                _chronoTime = TimeSpan.Zero;
+                DisplayTime = "00:00:00";
+            }
+            else if (IsTimer)
+            {
+                _countdownTime = TimeSpan.FromMinutes(25); // Varsayılan süreye dön
+                DisplayTime = _countdownTime.ToString(@"mm\:ss");
+            }
+        }
+
+        private async Task SetCountdownTimeAsync()
+        {
+            if (IsRunning) return;
+
+            string result = await Shell.Current.DisplayPromptAsync(
+                "Süre Ayarla",
+                "Dakika giriniz:",
+                keyboard: Keyboard.Numeric);
+
+            if (int.TryParse(result, out int minutes) && minutes > 0)
+            {
+                _countdownTime = TimeSpan.FromMinutes(minutes);
+                DisplayTime = _countdownTime.ToString(@"mm\:ss");
+            }
         }
     }
 } 
