@@ -20,6 +20,8 @@ namespace MauiApp1.ViewModels
         private bool _isRunning;
         private bool _isChronometer = true;
         private bool _isTimer;
+        private bool _isBreakTime;
+        private TimeSpan _breakDuration = TimeSpan.FromMinutes(5); // Varsayılan mola süresi
         
         public ObservableCollection<TodoItem> TodoItems
         {
@@ -61,6 +63,12 @@ namespace MauiApp1.ViewModels
                     IsChronometer = false;
                 }
             }
+        }
+
+        public bool IsBreakTime
+        {
+            get => _isBreakTime;
+            set => SetProperty(ref _isBreakTime, value);
         }
 
         public ICommand AddTodoCommand { get; }
@@ -144,12 +152,10 @@ namespace MauiApp1.ViewModels
 
         private async void Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-
             foreach (var item in TodoItems.Where(x => x.IsTimerRunning))
             {
                 if (item.IsCountdown)
                 {
-                    // Geri sayım modu
                     var elapsed = DateTime.Now - item.TimerStartedAt.Value;
                     item.RemainingTime = item.TargetDuration - elapsed;
                     
@@ -157,22 +163,44 @@ namespace MauiApp1.ViewModels
                     {
                         item.IsTimerRunning = false;
                         item.RemainingTime = TimeSpan.Zero;
+
                         await MainThread.InvokeOnMainThreadAsync(async () =>
                         {
-                            await Shell.Current.DisplayAlert("Süre Doldu!", $"{item.Title} için süre doldu!", "Tamam");
+                            if (!IsBreakTime)
+                            {
+                                var startBreak = await Shell.Current.DisplayAlert(
+                                    "Süre Doldu!", 
+                                    $"{item.Title} için çalışma süresi doldu! Mola başlasın mı?", 
+                                    "Evet", "Hayır");
+
+                                if (startBreak)
+                                {
+                                    IsBreakTime = true;
+                                    item.TargetDuration = _breakDuration;
+                                    item.RemainingTime = _breakDuration;
+                                    item.TimerStartedAt = DateTime.Now;
+                                    item.IsTimerRunning = true;
+                                }
+                            }
+                            else
+                            {
+                                await Shell.Current.DisplayAlert(
+                                    "Mola Bitti!", 
+                                    "Mola süreniz doldu. Yeni bir pomodoro başlatabilirsiniz.", 
+                                    "Tamam");
+                                IsBreakTime = false;
+                            }
                         });
-                        break;
                     }
+                    await _databaseService.SaveTodoItemAsync(item);
                 }
                 else
                 {
                     // Normal kronometre modu
                     item.ElapsedTime = DateTime.Now - item.TimerStartedAt.Value;
+                    await _databaseService.SaveTodoItemAsync(item);
                 }
-                await _databaseService.SaveTodoItemAsync(item);
             }
-          
-           
         }
 
         private async Task ToggleTimerAsync(TodoItem item)
@@ -229,26 +257,46 @@ namespace MauiApp1.ViewModels
 
         private async Task SetTimerAsync(TodoItem item)
         {
-            string[] durations = { "5 dakika", "15 dakika", "25 dakika", "Özel" };
-            string result = await Shell.Current.DisplayActionSheet("Süre Seç", "İptal", null, durations);
+            var options = new string[] { 
+                "25 dk + 5 dk mola", 
+                "45 dk + 15 dk mola",
+                "50 dk + 10 dk mola",
+                "Özel" 
+            };
 
-            TimeSpan duration;
+            string result = await Shell.Current.DisplayActionSheet("Pomodoro Seç", "İptal", null, options);
+
+            TimeSpan workDuration;
             switch (result)
             {
-                case "5 dakika":
-                    duration = TimeSpan.FromMinutes(5);
+                case "25 dk + 5 dk mola":
+                    workDuration = TimeSpan.FromMinutes(25);
+                    _breakDuration = TimeSpan.FromMinutes(5);
                     break;
-                case "15 dakika":
-                    duration = TimeSpan.FromMinutes(15);
+                case "45 dk + 15 dk mola":
+                    workDuration = TimeSpan.FromMinutes(45);
+                    _breakDuration = TimeSpan.FromMinutes(15);
                     break;
-                case "25 dakika":
-                    duration = TimeSpan.FromMinutes(25);
+                case "50 dk + 10 dk mola":
+                    workDuration = TimeSpan.FromMinutes(50);
+                    _breakDuration = TimeSpan.FromMinutes(10);
                     break;
                 case "Özel":
-                    string customMinutes = await Shell.Current.DisplayPromptAsync("Özel Süre", "Dakika giriniz:", keyboard: Keyboard.Numeric);
-                    if (int.TryParse(customMinutes, out int minutes))
+                    string workMinutes = await Shell.Current.DisplayPromptAsync(
+                        "Çalışma Süresi", 
+                        "Dakika giriniz:",
+                        keyboard: Keyboard.Numeric);
+                    
+                    string breakMinutes = await Shell.Current.DisplayPromptAsync(
+                        "Mola Süresi", 
+                        "Dakika giriniz:",
+                        keyboard: Keyboard.Numeric);
+
+                    if (int.TryParse(workMinutes, out int work) && 
+                        int.TryParse(breakMinutes, out int brk))
                     {
-                        duration = TimeSpan.FromMinutes(minutes);
+                        workDuration = TimeSpan.FromMinutes(work);
+                        _breakDuration = TimeSpan.FromMinutes(brk);
                     }
                     else return;
                     break;
@@ -256,9 +304,10 @@ namespace MauiApp1.ViewModels
                     return;
             }
 
-            item.TargetDuration = duration;
-            item.RemainingTime = duration;
+            item.TargetDuration = workDuration;
+            item.RemainingTime = workDuration;
             item.IsCountdown = true;
+            IsBreakTime = false;
             await _databaseService.SaveTodoItemAsync(item);
         }
 

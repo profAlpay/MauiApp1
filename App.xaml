@@ -21,6 +21,7 @@
             <converters:TimerModeTextConverter x:Key="TimerModeTextConverter" />
             <converters:RunningButtonTextConverter x:Key="RunningButtonTextConverter" />
             <converters:RunningButtonColorConverter x:Key="RunningButtonColorConverter" />
+            <converters:BoolToOpacityConverter x:Key="BoolToOpacityConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>
