@@ -22,6 +22,7 @@
             <converters:RunningButtonTextConverter x:Key="RunningButtonTextConverter" />
             <converters:RunningButtonColorConverter x:Key="RunningButtonColorConverter" />
             <converters:BoolToOpacityConverter x:Key="BoolToOpacityConverter" />
+            <converters:StringNotEmptyConverter x:Key="StringNotEmptyConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

@@ -228,12 +228,15 @@ namespace MauiApp1.ViewModels
 
         private async Task AddTodoAsync()
         {
-            string result = await Shell.Current.DisplayPromptAsync("Yeni Görev", "Görev başlığını girin:");
-            if (!string.IsNullOrWhiteSpace(result))
+            string title = await Shell.Current.DisplayPromptAsync("Yeni Görev", "Görev başlığını girin:");
+            if (!string.IsNullOrWhiteSpace(title))
             {
+                string description = await Shell.Current.DisplayPromptAsync("Görev Detayı", "Görev açıklamasını girin:");
+                
                 var newItem = new TodoItem 
                 { 
-                    Title = result,
+                    Title = title,
+                    Description = description ?? "",  // Açıklama boş bırakılabilir
                     CreatedAt = DateTime.Now 
                 };
                 
