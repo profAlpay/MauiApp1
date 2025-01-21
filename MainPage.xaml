@@ -138,15 +138,35 @@
 
         <!-- Alt Kısım: Görevler Listesi -->
         <Grid Grid.Row="2" RowDefinitions="Auto,*">
-            <Label Text="Görevlerim"
-                   FontSize="24"
-                   FontAttributes="Bold"
-                   TextColor="#212529"
-                   Margin="10,0,0,15"/>
-            
+            <!-- Başlık ve Yeni Görev Butonu -->
+            <Grid ColumnDefinitions="Auto,*,Auto">
+                <Label Text="Görevlerim"
+                       Grid.Column="0"
+                       FontSize="24"
+                       FontAttributes="Bold"
+                       TextColor="#212529"
+                       VerticalOptions="Center"
+                       Margin="10,0,0,15"/>
+
+                <!-- Yeni Görev Ekleme Butonu -->
+                <Button Grid.Column="2"
+                        Text="+"
+                        Command="{Binding AddTodoCommand}"
+                        BackgroundColor="#4a90e2"
+                        TextColor="White"
+                        CornerRadius="20"
+                        HeightRequest="40"
+                        WidthRequest="40"
+                        FontSize="20"
+                        FontAttributes="Bold"
+                        Padding="0"
+                        Margin="0,0,10,15"/>
+            </Grid>
+
+            <!-- Görev Listesi -->
             <CollectionView Grid.Row="1"
-                           ItemsSource="{Binding TodoItems}"
-                           SelectionMode="None">
+                            ItemsSource="{Binding TodoItems}"
+                            SelectionMode="None">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <Frame Margin="0,5" 
@@ -226,21 +246,6 @@
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
-
-            <!-- Yeni Görev Ekleme Butonu -->
-            <Button Grid.Row="1"
-                    Text="+"
-                    Command="{Binding AddTodoCommand}"
-                    BackgroundColor="#4a90e2"
-                    TextColor="White"
-                    CornerRadius="35"
-                    HeightRequest="70"
-                    WidthRequest="70"
-                    FontSize="35"
-                    FontAttributes="Bold"
-                    VerticalOptions="End"
-                    HorizontalOptions="End"
-                    Margin="0,0,0,20"/>
         </Grid>
     </Grid>
 </ContentPage>
