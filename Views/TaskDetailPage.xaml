@@ -7,17 +7,44 @@
     <ScrollView>
         <VerticalStackLayout Padding="20">
             <!-- Görev Başlığı -->
-            <Label Text="{Binding Title}"
-                   FontSize="24"
-                   FontAttributes="Bold"
-                   TextColor="#212529"
-                   Margin="0,0,0,20"/>
+            <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,20">
+                <Entry Text="{Binding Title}"
+                       FontSize="24"
+                       TextColor="#212529"
+                       IsEnabled="{Binding IsEditing}"/>
+                
+                <Button Grid.Column="1"
+                        Text="{Binding EditButtonText}"
+                        Command="{Binding ToggleEditCommand}"
+                        BackgroundColor="#4a90e2"
+                        TextColor="White"
+                        CornerRadius="10"
+                        HeightRequest="40"
+                        WidthRequest="40"
+                        Padding="0"
+                        Margin="10,0,0,0"/>
+            </Grid>
 
             <!-- Görev Açıklaması -->
             <Label Text="Açıklama:"
                    FontSize="16"
                    FontAttributes="Bold"
                    TextColor="#495057"/>
+
+            <Editor Text="{Binding Description}"
+                    HeightRequest="100"
+                    IsEnabled="{Binding IsEditing}"
+                    Placeholder="Açıklama ekleyin..."
+                    Margin="0,10"/>
+
+            <!-- Kaydet Butonu -->
+            <Button Text="Kaydet"
+                    Command="{Binding SaveChangesCommand}"
+                    IsVisible="{Binding IsEditing}"
+                    BackgroundColor="#28a745"
+                    TextColor="White"
+                    CornerRadius="10"
+                    Margin="0,10"/>
 
             <!-- Video Link Varsa -->
             <Frame IsVisible="{Binding HasVideoLink}"
@@ -36,11 +63,6 @@
                            FontSize="16"
                            TextColor="#212529"
                            Margin="0,10"/>
-                    
-                    <!-- Video Link -->
-                    <Label Text="{Binding Description}"
-                           TextColor="#6c757d"
-                           FontSize="14"/>
 
                     <!-- Video Aç Butonu -->
                     <Button Text="Videoyu Aç"
@@ -51,12 +73,6 @@
                             Margin="0,10,0,0"/>
                 </VerticalStackLayout>
             </Frame>
-
-            <!-- Normal Açıklama -->
-            <Label Text="{Binding Description}"
-                   IsVisible="{Binding HasVideoLink, Converter={StaticResource InverseBoolConverter}}"
-                   TextColor="#212529"
-                   FontSize="16"/>
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage> 

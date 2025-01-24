@@ -356,7 +356,7 @@ namespace MauiApp1.ViewModels
 
         private async Task ShowTaskDetail(TodoItem item)
         {
-            var detailViewModel = new TaskDetailViewModel { Task = item };
+            var detailViewModel = new TaskDetailViewModel(_databaseService) { Task = item };
             var detailPage = new TaskDetailPage { BindingContext = detailViewModel };
             await Shell.Current.Navigation.PushAsync(detailPage);
         }
