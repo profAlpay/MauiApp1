@@ -249,6 +249,18 @@
                                             HeightRequest="45"
                                             CornerRadius="23"
                                             Padding="0"/>
+
+                                    <Button Grid.Column="2"
+                                            Text="📝"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.ShowTaskDetailCommand}"
+                                            CommandParameter="{Binding .}"
+                                            BackgroundColor="#e9ecef"
+                                            TextColor="#495057"
+                                            FontSize="20"
+                                            WidthRequest="45"
+                                            HeightRequest="45"
+                                            CornerRadius="23"
+                                            Padding="0"/>
                                 </Grid>
                             </Frame>
                         </DataTemplate>

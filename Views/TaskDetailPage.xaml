@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MauiApp1.Views.TaskDetailPage"
+             Title="Görev Detayı">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20">
+            <!-- Görev Başlığı -->
+            <Label Text="{Binding Title}"
+                   FontSize="24"
+                   FontAttributes="Bold"
+                   TextColor="#212529"
+                   Margin="0,0,0,20"/>
+
+            <!-- Görev Açıklaması -->
+            <Label Text="Açıklama:"
+                   FontSize="16"
+                   FontAttributes="Bold"
+                   TextColor="#495057"/>
+
+            <!-- Video Link Varsa -->
+            <Frame IsVisible="{Binding HasVideoLink}"
+                   BackgroundColor="#f8f9fa"
+                   Padding="15"
+                   Margin="0,10"
+                   CornerRadius="10">
+                <VerticalStackLayout>
+                    <!-- Video Önizleme Resmi -->
+                    <Image Source="{Binding VideoThumbnail}"
+                           HeightRequest="200"
+                           Aspect="AspectFill"/>
+                    
+                    <!-- Video Başlığı -->
+                    <Label Text="{Binding VideoTitle}"
+                           FontSize="16"
+                           TextColor="#212529"
+                           Margin="0,10"/>
+                    
+                    <!-- Video Link -->
+                    <Label Text="{Binding Description}"
+                           TextColor="#6c757d"
+                           FontSize="14"/>
+
+                    <!-- Video Aç Butonu -->
+                    <Button Text="Videoyu Aç"
+                            Command="{Binding OpenVideoCommand}"
+                            BackgroundColor="#4a90e2"
+                            TextColor="White"
+                            CornerRadius="10"
+                            Margin="0,10,0,0"/>
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Normal Açıklama -->
+            <Label Text="{Binding Description}"
+                   IsVisible="{Binding HasVideoLink, Converter={StaticResource InverseBoolConverter}}"
+                   TextColor="#212529"
+                   FontSize="16"/>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage> 

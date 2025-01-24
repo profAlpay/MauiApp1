@@ -6,6 +6,7 @@ using Timer = System.Timers.Timer;
 using System.Threading.Tasks;
 using System.Threading;
 using Microsoft.Maui.Controls;
+using MauiApp1.Views;
 
 namespace MauiApp1.ViewModels
 {
@@ -80,6 +81,7 @@ namespace MauiApp1.ViewModels
         public ICommand StartStopCommand { get; }
         public ICommand ResetCommand { get; }
         public ICommand SetCountdownTimeCommand { get; }
+        public ICommand ShowTaskDetailCommand { get; }
 
         public MainViewModel(DatabaseService databaseService)
         {
@@ -148,6 +150,8 @@ namespace MauiApp1.ViewModels
                 }
                 return true;
             });
+
+            ShowTaskDetailCommand = new Command<TodoItem>(async (item) => await ShowTaskDetail(item));
         }
 
         private async void Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
@@ -348,6 +352,13 @@ namespace MauiApp1.ViewModels
                 _countdownTime = TimeSpan.FromMinutes(minutes);
                 DisplayTime = _countdownTime.ToString(@"mm\:ss");
             }
+        }
+
+        private async Task ShowTaskDetail(TodoItem item)
+        {
+            var detailViewModel = new TaskDetailViewModel { Task = item };
+            var detailPage = new TaskDetailPage { BindingContext = detailViewModel };
+            await Shell.Current.Navigation.PushAsync(detailPage);
         }
     }
 } 
